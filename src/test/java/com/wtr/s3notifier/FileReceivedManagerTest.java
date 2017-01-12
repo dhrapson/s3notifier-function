@@ -16,17 +16,33 @@ import com.wtr.s3notifier.s3.S3FileManager;
 public class FileReceivedManagerTest {
 	
 	@Test
-	public void testSingleFileProcessing() {
+	public void testSingleFileProcessingForNonEmptyFile() throws Exception {
 		EmailManager emailer = Mockito.mock(EmailManager.class);
 		S3FileManager s3 = Mockito.mock(S3FileManager.class);
 		DropboxManager dropbox = Mockito.mock(DropboxManager.class);
-		FileReceivedManager manager = new FileReceivedManager(s3, dropbox, emailer, "test@example.com");
+		FileReceivedManager managerReal = new FileReceivedManager(s3, dropbox, emailer, "test@example.com");
+		FileReceivedManager managerSpy = Mockito.spy(managerReal);
 		ClientDataFile cdf = new ClientDataFile("/parent", "integrator", "client/INPUT/file");
 		File f = new File("notused");
 		when(s3.downloadFile("integrator", "client/INPUT/file")).thenReturn(f);
+		Mockito.doReturn("somecontent").when(managerSpy).readFile(f);
 		
-		assertEquals(true, manager.process(cdf));
+		assertEquals(true, managerSpy.process(cdf));
 		verify(dropbox).uploadFile(f, "/parent/integrator/client/file");
 		verify(emailer).sendEmail("test@example.com", "A new integrator file has arrived for client", "The file is in Dropbox under /parent/integrator/client/file");
+	}
+	
+	@Test
+	public void testSingleFileProcessingForEmptyFile() throws Exception {
+		
+		S3FileManager s3 = Mockito.mock(S3FileManager.class);
+		FileReceivedManager managerReal = new FileReceivedManager(s3, null, null, "test@example.com");
+		FileReceivedManager managerSpy = Mockito.spy(managerReal);
+		ClientDataFile cdf = new ClientDataFile("/parent", "integrator", "client/INPUT/file");
+		File f = new File("notused");
+		Mockito.doReturn("  ").when(managerSpy).readFile(f);
+		when(s3.downloadFile("integrator", "client/INPUT/file")).thenReturn(f);
+		
+		assertEquals(false, managerSpy.process(cdf));
 	}
 }
