@@ -2,10 +2,11 @@ package com.wtr.s3notifier;
 
 public class ClientDataFile {
 	
-	private String integratorId, clientId, fileName, fullId;
+	private String uploadPrefix, integratorId, clientId, fileName, fullId;
 	
-	public ClientDataFile(String integratorId, String key) {
+	public ClientDataFile(String uploadPrefix, String integratorId, String key) {
 		super();
+		this.uploadPrefix = uploadPrefix;
 		this.integratorId = integratorId;
 		this.clientId = clientNameFromKey(key);
 		this.fileName = fileNameFromKey(key);
@@ -25,7 +26,7 @@ public class ClientDataFile {
 	}
 	
 	public String getUploadLocation() {
-		return "/"+integratorId+"/"+clientId+"/"+fileName;
+		return uploadPrefix+"/"+integratorId+"/"+clientId+"/"+fileName;
 	}
 	
 	public String getDownloadLocation() {

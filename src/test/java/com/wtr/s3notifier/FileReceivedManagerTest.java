@@ -22,12 +22,12 @@ public class FileReceivedManagerTest {
 		S3FileManager s3 = Mockito.mock(S3FileManager.class);
 		DropboxManager dropbox = Mockito.mock(DropboxManager.class);
 		FileReceivedManager manager = new FileReceivedManager(s3, dropbox, emailer, "test@example.com");
-		ClientDataFile cdf = new ClientDataFile("integrator", "client/INPUT/file");
+		ClientDataFile cdf = new ClientDataFile("/parent", "integrator", "client/INPUT/file");
 		File f = new File("notused");
 		when(s3.downloadFile("integrator", "client/INPUT/file")).thenReturn(f);
 		
 		assertEquals(true, manager.process(cdf));
-		verify(dropbox).uploadFile(f, "/integrator/client/file");
-		verify(emailer).sendEmail("test@example.com", "A new integrator file has arrived for client", "The file is in Dropbox under /integrator/client/file");
+		verify(dropbox).uploadFile(f, "/parent/integrator/client/file");
+		verify(emailer).sendEmail("test@example.com", "A new integrator file has arrived for client", "The file is in Dropbox under /parent/integrator/client/file");
 	}
 }

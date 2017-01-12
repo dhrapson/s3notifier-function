@@ -21,6 +21,7 @@ public class S3EventHandler implements RequestHandler<S3Event, List<String>> {
     
     private FileReceivedManager manager;
     private Configurator config;
+    private String dropboxParentFolder;
     @Override
     public List<String> handleRequest(S3Event input, Context context) {
     	
@@ -34,7 +35,7 @@ public class S3EventHandler implements RequestHandler<S3Event, List<String>> {
     	    String s3Bucket = record.getS3().getBucket().getName();
     	    if (s3Key.contains("/INPUT/")) {
     	    	log.info("processing "+s3Key+" in "+s3Bucket);
-    	    	filesToProcess.add(new ClientDataFile(s3Bucket, s3Key));
+    	    	filesToProcess.add(new ClientDataFile(dropboxParentFolder, s3Bucket, s3Key));
     	    }
      	}
     	
@@ -55,6 +56,7 @@ public class S3EventHandler implements RequestHandler<S3Event, List<String>> {
 	    	String emailFrom = config.getConfigValue("EMAIL_FROM");
 	    	String emailTo = config.getConfigValue("EMAIL_TO");
 	    	String dropboxAccessToken = config.getConfigValue("DROPBOX_ACCESS_TOKEN");
+	    	dropboxParentFolder = config.getConfigValue("DROPBOX_PARENT_FOLDER");
 	    	manager = new FileReceivedManager( new S3FileManager(), 
 	    			new DropboxManager(DropboxManager.getClient(dropboxAccessToken)), 
 	    			new EmailManager(smtpHost, smtpPort, smtpUsername, smtpPassword, emailFrom),
