@@ -36,7 +36,7 @@ public class DropboxManager {
 	public void uploadFile(File localFile, String remoteFilePath) {		
 		
 		log.info("Uploading "+localFile.getPath()+" to dropbox: "+remoteFilePath);
-		try (InputStream in = new FileInputStream(localFile)) {
+		try (InputStream in = getInputStream(localFile)) {
             FileMetadata metadata = dbxClient.files().uploadBuilder(remoteFilePath)
                 .withMode(WriteMode.ADD)
                 .withClientModified(new Date(localFile.lastModified()))
@@ -86,6 +86,11 @@ public class DropboxManager {
 		DbxRequestConfig config = newBuilder.withUserLocaleFrom(Locale.getDefault()).build();
 		return new DbxClientV2(config, accessToken);
 	}
+	
+	InputStream getInputStream(File localFile) throws FileNotFoundException {
+		return new FileInputStream(localFile);
+	}
+
 }
 
 	
