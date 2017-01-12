@@ -5,7 +5,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.util.Arrays;
 
 import org.junit.Test;
 import org.mockito.Mockito;
