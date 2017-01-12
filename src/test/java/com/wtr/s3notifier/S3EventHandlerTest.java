@@ -29,17 +29,7 @@ public class S3EventHandlerTest {
 	    public void testLambdaFunctionHandler() {
 	        S3EventHandler handlerReal = new S3EventHandler();
 	        S3EventHandler handlerSpy = Mockito.spy(handlerReal);
-	        
-	        Configurator mockConfig = Mockito.mock(Configurator.class);
-	        when(mockConfig.getConfigValue("SMTP_HOST")).thenReturn("email-smtp.eu-west-1.amazonaws.com");
-	        when(mockConfig.getConfigValue("SMTP_PORT")).thenReturn("25");
-	        when(mockConfig.getConfigValue("SMTP_USERNAME")).thenReturn("sometestuser");
-	        when(mockConfig.getConfigValue("SMTP_PASSWORD")).thenReturn("sometestpwd");
-	        when(mockConfig.getConfigValue("EMAIL_FROM")).thenReturn("test@example.com");
-	        when(mockConfig.getConfigValue("EMAIL_TO")).thenReturn("test@example.com");
-	        when(mockConfig.getConfigValue("DROPBOX_ACCESS_TOKEN")).thenReturn("abc123");
-	        doReturn(mockConfig).when(handlerSpy).getConfigurator();
-	        
+	        	        
 	        FileReceivedManager manager = Mockito.mock(FileReceivedManager.class);
 	        doReturn(manager).when(handlerSpy).getFileReceivedManager();
 	        
