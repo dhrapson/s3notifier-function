@@ -47,6 +47,7 @@ mvn clean verify
 * Maven 3
 * Java 8
 * Install Terraform
+* An AWS account with credentials, that has permissions to create / modify IAM roles and deploy lambda functions
 
 ### Deployment Commands
 
