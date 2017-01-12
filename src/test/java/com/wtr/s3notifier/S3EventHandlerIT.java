@@ -16,7 +16,7 @@ import org.mockito.Mockito;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.events.S3Event;
 
-public class S3EventHandlerTest {
+public class S3EventHandlerIT {
 	
 	 private static S3Event input;
 
@@ -30,25 +30,16 @@ public class S3EventHandlerTest {
 	        S3EventHandler handlerReal = new S3EventHandler();
 	        S3EventHandler handlerSpy = Mockito.spy(handlerReal);
 	        
-	        Configurator mockConfig = Mockito.mock(Configurator.class);
-	        when(mockConfig.getConfigValue("SMTP_HOST")).thenReturn("email-smtp.eu-west-1.amazonaws.com");
-	        when(mockConfig.getConfigValue("SMTP_PORT")).thenReturn("25");
-	        when(mockConfig.getConfigValue("SMTP_USERNAME")).thenReturn("sometestuser");
-	        when(mockConfig.getConfigValue("SMTP_PASSWORD")).thenReturn("sometestpwd");
-	        when(mockConfig.getConfigValue("EMAIL_FROM")).thenReturn("test@example.com");
-	        when(mockConfig.getConfigValue("EMAIL_TO")).thenReturn("test@example.com");
-	        when(mockConfig.getConfigValue("DROPBOX_ACCESS_TOKEN")).thenReturn("abc123");
-	        doReturn(mockConfig).when(handlerSpy).getConfigurator();
-	        
-	        FileReceivedManager manager = Mockito.mock(FileReceivedManager.class);
-	        doReturn(manager).when(handlerSpy).getFileReceivedManager();
+	        Configurator spyConfig = Mockito.spy(Configurator.class);
+	        doReturn("email-smtp.eu-west-1.amazonaws.com").when(spyConfig).getConfigValue("SMTP_HOST");
+	        doReturn("25").when(spyConfig).getConfigValue("SMTP_PORT");
+	        doReturn(spyConfig).when(handlerSpy).getConfigurator();
 	        
 	        Context ctx = createContext();
 	        
 	        List<String> output = handlerSpy.handleRequest(input, ctx);
 	        List<String> expected = Arrays.asList("test-integrator/test-client/INPUT/test-file.csv");
 	        assertEquals(expected, output);
-	        verify(manager).process(new ClientDataFile("test-integrator", "test-client/INPUT/test-file.csv"));
 	    }
 	    
 	    private Context createContext() {
