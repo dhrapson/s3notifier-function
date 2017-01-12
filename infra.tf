@@ -67,6 +67,7 @@ resource "aws_lambda_function" "s3notifier" {
             EMAIL_FROM = "${var.email_from}"
             EMAIL_TO = "${var.email_to}"
             DROPBOX_ACCESS_TOKEN  ="${var.dropbox_access_token}"
+            DROPBOX_PARENT_FOLDER ="${var.dropbox_parent_folder}"
         }
     }
     timeout = 20

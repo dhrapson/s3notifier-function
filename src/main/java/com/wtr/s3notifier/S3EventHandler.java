@@ -57,6 +57,9 @@ public class S3EventHandler implements RequestHandler<S3Event, List<String>> {
 	    	String emailTo = config.getConfigValue("EMAIL_TO");
 	    	String dropboxAccessToken = config.getConfigValue("DROPBOX_ACCESS_TOKEN");
 	    	dropboxParentFolder = config.getConfigValue("DROPBOX_PARENT_FOLDER");
+	    	if (!dropboxParentFolder.startsWith("/")) {
+	    		throw new ConfigurationException("Dropbox parent folder must start with a leading slash. The value provided does not: "+dropboxParentFolder);
+	    	}
 	    	manager = new FileReceivedManager( new S3FileManager(), 
 	    			new DropboxManager(DropboxManager.getClient(dropboxAccessToken)), 
 	    			new EmailManager(smtpHost, smtpPort, smtpUsername, smtpPassword, emailFrom),
