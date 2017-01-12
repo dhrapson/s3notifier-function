@@ -14,6 +14,10 @@ The code can be developed and tested from the desktop without deployment to AWS
 * AWS SES service must be initiated and the SMTP credentials retrieved
 * Domain must be setup in AWS SES. If SES has not yet verified you domain, both the EMAIL_FROM and EMAIL_TO addresses must be verified 
 * A dropbox app must have been created, with a valid access token
+* An AWS account with credentials
+* An S3 bucket into which the account has access
+
+
 
 ## Running Unit Tests
 
@@ -23,13 +27,17 @@ mvn clean test
 
 ### Running Integration Tests
 
+First store your AWS credentials in the standard .aws/credentials file or as the standard environment variables: `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+Then run
+
 ```
 SMTP_USERNAME='insert_aws_ses_smtp_username' \
 SMTP_PASSWORD='insert_aws_ses_smtp_password' \
 EMAIL_FROM='insert_email_address' \
 EMAIL_TO='insert_email_address' \
 DROPBOX_ACCESS_TOKEN='insert_dropbox_access_token' \
-DROPBOX_PARENT_FOLDER='/test' mvn clean verify
+DROPBOX_PARENT_FOLDER='/test' \
+mvn clean verify
 ```
 
 ## Deployment to AWS
@@ -40,7 +48,10 @@ DROPBOX_PARENT_FOLDER='/test' mvn clean verify
 * Java 8
 * Install Terraform
 
-## Deployment Commands
+### Deployment Commands
+
+First store your AWS credentials in the standard .aws/credentials file or as the standard environment variables: `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
+Then run
 
 ```
 mvn package && \
