@@ -21,7 +21,8 @@ public class S3EventHandlerIT {
 	 private static S3Event input;
 
 	    @BeforeClass
-	    public static void createInput() throws IOException {
+	    public static void createInput() throws Exception {
+	        EnvVars.checkEnvVars(EnvVars.DROPBOX_PARENT_FOLDER_ENV_VAR, EnvVars.DROPBOX_ACCESS_TOKEN_ENV_VAR, EnvVars.SMTP_USERNAME_ENV_VAR, EnvVars.SMTP_PASSWORD_ENV_VAR, EnvVars.EMAIL_FROM_ENV_VAR, EnvVars.EMAIL_TO_ENV_VAR);
 	        input = TestUtils.parse("s3-event.put.json", S3Event.class);
 	    }
 

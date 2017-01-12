@@ -10,23 +10,20 @@ import java.nio.file.Files;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.wtr.s3notifier.EnvVars;
 import com.wtr.s3notifier.s3.S3Exception;
 
 public class DropboxManagerIT {
 	
-	private static final String ACCESS_TOKEN_ENV_VAR = "DROPBOX_ACCESS_TOKEN";
-	
 	@BeforeClass
 	public static void check() throws Exception {
-		if (System.getenv(ACCESS_TOKEN_ENV_VAR) == null) {
-			throw new Exception("Missing environment variable: "+ACCESS_TOKEN_ENV_VAR);
-		}
+		EnvVars.checkEnvVars(EnvVars.DROPBOX_ACCESS_TOKEN_ENV_VAR);
 	}
 	
 	@Test
 	public void testDropboxFileManagement() throws Exception {
 		
-		DropboxManager dropbox = new DropboxManager(DropboxManager.getClient(System.getenv(ACCESS_TOKEN_ENV_VAR)));
+		DropboxManager dropbox = new DropboxManager(DropboxManager.getClient(System.getenv(EnvVars.DROPBOX_ACCESS_TOKEN_ENV_VAR)));
 		String remoteFilePath = "/testing/upload-fixture.txt";
 		try {
 			URL resource = this.getClass().getResource("/upload-fixture.txt");
