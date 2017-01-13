@@ -83,6 +83,21 @@ public class S3FileManager {
 	    log.info("Uploaded object from "+file.getPath()+" to "+s3Bucket+"/"+s3Key);   
 	}
 	
+	public void moveFile(String s3Bucket, String oldKey, String newKey) {
+		s3Client.copyObject(s3Bucket, oldKey, s3Bucket, newKey);
+	    
+	    log.info("Copied object from "+oldKey+" to "+newKey+" in "+s3Bucket);
+	    s3Client.deleteObject(s3Bucket, oldKey);
+	    log.info("Deleted moved object from "+oldKey+" in "+s3Bucket);
+	}
+	
+	public void deleteFile(String s3Bucket, String key) {
+		s3Client.deleteObject(s3Bucket, key);
+	   
+	    log.info("Deleted object from "+key+" in "+s3Bucket);
+	}
+	
+	
 	public File downloadFile(String s3Bucket, String s3Key) {
 		S3Object object = s3Client.getObject(new GetObjectRequest(s3Bucket, s3Key));
 	    InputStream objectData = object.getObjectContent();	    
