@@ -14,7 +14,6 @@ import org.apache.log4j.Logger;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ListObjectsV2Request;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
@@ -26,11 +25,17 @@ public class S3FileManager {
 	
 	private static final Logger log = LogManager.getLogger(S3FileManager.class);
 	
+	private AmazonS3 s3Client;
+	
+	public S3FileManager(AmazonS3 s3Client) {
+		this.s3Client = s3Client;
+	}
+	
 	public List<String> listFiles(String bucketName) {
 		return listFiles(bucketName, null);
 	}
+	
 	public List<String> listFiles(String bucketName, String prefix) {
-		AmazonS3 s3client = new AmazonS3Client();
 		List<String> objectNames = new ArrayList<>();
         try {
             log.info("Listing objects");
@@ -40,7 +45,7 @@ public class S3FileManager {
             }
             ListObjectsV2Result result;
             do {               
-               result = s3client.listObjectsV2(req);
+               result = s3Client.listObjectsV2(req);
                
                for (S3ObjectSummary objectSummary : result.getObjectSummaries()) {
                    objectNames.add(objectSummary.getKey());
@@ -73,16 +78,12 @@ public class S3FileManager {
 	}
 	
 	public void uploadFile(String s3Bucket, String s3Key, File file) {
-		AmazonS3Client s3Client = new AmazonS3Client();        
-				
 		s3Client.putObject(new PutObjectRequest(s3Bucket, s3Key, file));
 	    
 	    log.info("Uploaded object from "+file.getPath()+" to "+s3Bucket+"/"+s3Key);   
 	}
 	
 	public File downloadFile(String s3Bucket, String s3Key) {
-		AmazonS3Client s3Client = new AmazonS3Client();        
-				
 		S3Object object = s3Client.getObject(new GetObjectRequest(s3Bucket, s3Key));
 	    InputStream objectData = object.getObjectContent();	    
 	    

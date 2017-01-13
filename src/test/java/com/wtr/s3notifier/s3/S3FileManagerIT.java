@@ -7,7 +7,7 @@ import java.net.URL;
 
 import org.junit.Test;
 
-import com.wtr.s3notifier.s3.S3FileManager;
+import com.amazonaws.services.s3.AmazonS3Client;
 
 public class S3FileManagerIT {
 	
@@ -18,7 +18,7 @@ public class S3FileManagerIT {
 		URL resource = this.getClass().getResource("/upload-fixture.txt");
 		File sourceFixture = new File(resource.getPath());
 		String bucketName = "test-integrator";
-		S3FileManager manager = new S3FileManager();
+		S3FileManager manager = new S3FileManager(new AmazonS3Client());
 		
 		manager.uploadFile(bucketName, remoteFilePath, sourceFixture);
 		

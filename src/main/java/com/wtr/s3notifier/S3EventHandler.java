@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.S3Event;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.event.S3EventNotification.S3EventNotificationRecord;
 import com.wtr.s3notifier.dropbox.DropboxManager;
 import com.wtr.s3notifier.email.EmailManager;
@@ -60,7 +61,7 @@ public class S3EventHandler implements RequestHandler<S3Event, List<String>> {
 	    	if (!dropboxParentFolder.startsWith("/")) {
 	    		throw new ConfigurationException("Dropbox parent folder must start with a leading slash. The value provided does not: "+dropboxParentFolder);
 	    	}
-	    	manager = new FileReceivedManager( new S3FileManager(), 
+	    	manager = new FileReceivedManager( new S3FileManager(new AmazonS3Client()), 
 	    			new DropboxManager(DropboxManager.getClient(dropboxAccessToken)), 
 	    			new EmailManager(smtpHost, smtpPort, smtpUsername, smtpPassword, emailFrom),
 	    			emailTo);
