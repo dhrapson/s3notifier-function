@@ -12,20 +12,24 @@ resource "aws_iam_role_policy" "s3notifier_lambda_iam_role_policy" {
 {
   "Version": "2012-10-17",
   "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "logs:*"
-      ],
-      "Resource": "arn:aws:logs:*:*:*"
-    },
      {
-      "Effect": "Allow",
-      "Action": [
-        "s3:Get*",
-        "s3:List*"
-      ],
-      "Resource": "arn:aws:s3:::*"
+        "Sid": "AllowFunctionToWriteCloudWatchLogs",
+        "Effect": "Allow",
+        "Action": [
+            "logs:*"
+        ],
+        "Resource": "arn:aws:logs:*:*:*"
+    },
+    {
+        "Sid": "AllowFunctionToManageS3Objects",
+        "Effect": "Allow",
+        "Action": [
+            "s3:Get*",
+            "s3:List*",
+            "s3:PutObject*",
+            "s3:DeleteObject*"
+        ],
+        "Resource": "arn:aws:s3:::*"
     }
   ]
 }
