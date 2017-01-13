@@ -28,7 +28,7 @@ public class ClientDataFile {
 	}
 	
 	public String getUploadLocation() {
-		return uploadPrefix+"/"+integratorId+"/"+clientId+"/"+fileName;
+		return uploadPrefix+"/"+integratorId+"/"+clientId+"/"+fileName+"-"+LocalDate.now();
 	}
 	
 	public String getDownloadLocation() {

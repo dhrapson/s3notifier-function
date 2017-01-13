@@ -29,9 +29,9 @@ public class FileReceivedManagerTest {
 		Mockito.doReturn("somecontent").when(managerSpy).readFile(f);
 		
 		assertEquals(true, managerSpy.process(cdf));
-		verify(dropbox).uploadFile(f, "/parent/integrator/client/file");
+		verify(dropbox).uploadFile(f, "/parent/integrator/client/file-"+LocalDate.now());
 		verify(s3).moveFile("integrator", "client/INPUT/file", "client/PROCESSED/file-"+LocalDate.now());
-		verify(emailer).sendEmail("test@example.com", "A new integrator file has arrived for client", "The file is in Dropbox under /parent/integrator/client/file");
+		verify(emailer).sendEmail("test@example.com", "A new integrator file has arrived for client", "The file is in Dropbox under /parent/integrator/client/file-"+LocalDate.now());
 	}
 	
 	@Test
