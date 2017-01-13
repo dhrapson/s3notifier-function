@@ -14,7 +14,7 @@ public class S3FileManagerIT {
 	
 	@Test
 	public void testFileDownload() {
-		String remoteFilePath = "/upload-fixture.txt";
+		String remoteFilePath = "upload-fixture.txt";
 		
 		URL resource = this.getClass().getResource("/upload-fixture.txt");
 		File sourceFixture = new File(resource.getPath());
