@@ -44,6 +44,7 @@ public class FileReceivedManager {
 		}
     	String targetLocation = cdf.getUploadLocation();
     	dropbox.uploadFile(file, targetLocation);
+    	s3.moveFile(cdf.getIntegratorId(), cdf.getDownloadLocation(), cdf.getProcessedLocation());
     	emailer.sendEmail(fileProcessorEmailTo, "A new "+cdf.getIntegratorId()+" file has arrived for "+cdf.getClientId(), "The file is in Dropbox under "+targetLocation);
     	return true;
 			

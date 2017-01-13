@@ -1,5 +1,7 @@
 package com.wtr.s3notifier;
 
+import java.time.LocalDate;
+
 public class ClientDataFile {
 	
 	private String uploadPrefix, integratorId, clientId, fileName, fullId;
@@ -31,6 +33,16 @@ public class ClientDataFile {
 	
 	public String getDownloadLocation() {
 		return fullId;
+	}
+	
+	public String getProcessedLocation() {
+		String prefix = null;
+		if (isThisInputFile()) {
+			prefix = fullId.replaceFirst("/INPUT/", "/PROCESSED/");
+		} else {
+			prefix = "/"+integratorId+"/"+clientId+"/PROCESSED/"+fileName;
+		}
+		return prefix +"-"+ LocalDate.now();
 	}
 
 	public String toString() {

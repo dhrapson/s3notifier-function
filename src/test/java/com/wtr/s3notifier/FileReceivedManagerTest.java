@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.time.LocalDate;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -29,6 +30,7 @@ public class FileReceivedManagerTest {
 		
 		assertEquals(true, managerSpy.process(cdf));
 		verify(dropbox).uploadFile(f, "/parent/integrator/client/file");
+		verify(s3).moveFile("integrator", "client/INPUT/file", "client/PROCESSED/file-"+LocalDate.now());
 		verify(emailer).sendEmail("test@example.com", "A new integrator file has arrived for client", "The file is in Dropbox under /parent/integrator/client/file");
 	}
 	
