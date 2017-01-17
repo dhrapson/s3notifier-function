@@ -54,11 +54,7 @@ public class ClientDataFile {
 	}
 	
 	public boolean isThisInputFile() {
-		if (fullId.contains("/INPUT/")) {
-			return true;
-		} else {
-			return false;
-		}
+		return isInputFile(fullId);
 	}
 	
 	public static boolean isInputFile(String key) {
