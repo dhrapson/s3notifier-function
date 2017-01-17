@@ -71,6 +71,7 @@ public class S3EventHandler implements RequestHandler<SNSEvent, List<String>> {
     	}
     	return dropboxParentFolder;
     }
+    
     FileReceivedManager getFileReceivedManager() {
     	if (manager == null) {
 	    	config = getConfigurator();
