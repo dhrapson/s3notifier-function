@@ -14,9 +14,11 @@ import org.apache.log4j.Logger;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CopyObjectRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ListObjectsV2Request;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
@@ -78,13 +80,21 @@ public class S3FileManager {
 	}
 	
 	public void uploadFile(String s3Bucket, String s3Key, File file) {
-		s3Client.putObject(new PutObjectRequest(s3Bucket, s3Key, file));
+		PutObjectRequest putRequest = new PutObjectRequest(
+				s3Bucket, s3Key, file);
+
+		// Request server-side encryption.
+		ObjectMetadata objectMetadata = new ObjectMetadata();
+		objectMetadata.setSSEAlgorithm(ObjectMetadata.AES_256_SERVER_SIDE_ENCRYPTION);
+
+		putRequest.setMetadata(objectMetadata);
+		s3Client.putObject(putRequest);
 	    
 	    log.info("Uploaded object from "+file.getPath()+" to "+s3Bucket+"/"+s3Key);   
 	}
 	
-	public void moveFile(String s3Bucket, String oldKey, String newKey) {
-		s3Client.copyObject(s3Bucket, oldKey, s3Bucket, newKey);
+	public void moveFile(String s3Bucket, String oldKey, String newKey) {		
+		s3Client.copyObject(createCopyObjectRequest(s3Bucket, oldKey, newKey));
 	    
 	    log.info("Copied object from "+oldKey+" to "+newKey+" in "+s3Bucket);
 	    s3Client.deleteObject(s3Bucket, oldKey);
@@ -111,6 +121,18 @@ public class S3FileManager {
 		copyInputStreamToFile(objectData, temp);
 		log.info("Downloaded object from "+s3Bucket+"/"+s3Key+" and written to "+temp.getPath());
 	    return temp;
+	}
+	
+	CopyObjectRequest createCopyObjectRequest(String s3Bucket, String oldKey, String newKey) {
+		CopyObjectRequest copyObjRequest = new CopyObjectRequest(s3Bucket, oldKey, s3Bucket, newKey);
+
+		// Request server-side encryption.
+		ObjectMetadata objectMetadata = new ObjectMetadata();
+		objectMetadata.setSSEAlgorithm(ObjectMetadata.AES_256_SERVER_SIDE_ENCRYPTION);
+
+		copyObjRequest.setNewObjectMetadata(objectMetadata);
+		
+		return copyObjRequest;
 	}
 	
 	private void copyInputStreamToFile( InputStream in, File file ) {
