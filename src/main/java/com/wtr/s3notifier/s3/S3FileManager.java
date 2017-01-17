@@ -33,29 +33,26 @@ public class S3FileManager {
 		this.s3Client = s3Client;
 	}
 	
-	public List<String> listFiles(String bucketName) {
+	public List<S3File> listFiles(String bucketName) {
 		return listFiles(bucketName, null);
 	}
 	
-	public List<String> listFiles(String bucketName, String prefix) {
-		List<String> objectNames = new ArrayList<>();
+	public List<S3File> listFiles(String bucketName, String prefix) {
+		List<S3File> filesFound = new ArrayList<>();
+
         try {
             log.info("Listing objects");
-            ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(bucketName);
-            if (prefix != null) {
-            	req.withPrefix(prefix);
+    		ListObjectsV2Result result;
+    		
+    		if (prefix != null) {
+    			result = s3Client.listObjectsV2(bucketName, prefix);
+            } else {
+            	result = s3Client.listObjectsV2(bucketName);
             }
-            ListObjectsV2Result result;
-            do {               
-               result = s3Client.listObjectsV2(req);
-               
-               for (S3ObjectSummary objectSummary : result.getObjectSummaries()) {
-                   objectNames.add(objectSummary.getKey());
-               }
-               log.debug("Next Continuation Token : " + result.getNextContinuationToken());
-               req.setContinuationToken(result.getNextContinuationToken());
-            } while(result.isTruncated() == true ); 
-            
+    		
+    		for (S3ObjectSummary objectSummary : result.getObjectSummaries()) {
+          	   filesFound.add(new S3File(bucketName, objectSummary.getKey(), objectSummary.getLastModified()));
+            }
          } catch (AmazonServiceException ase) {
             log.error("Caught an AmazonServiceException, " +
             		"which means your request made it " +
@@ -76,7 +73,7 @@ public class S3FileManager {
         	log.error("Error Message: " + ace.getMessage());
             throw new S3Exception(ace);
         }
-        return objectNames;
+        return filesFound;
 	}
 	
 	public void uploadFile(String s3Bucket, String s3Key, File file) {
