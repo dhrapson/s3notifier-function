@@ -6,6 +6,7 @@ import java.util.Date;
 
 public class ClientDataFile {
 	
+	private final static String INPUT_DATA_FILE_IDENTIFIER = "/INPUT/";
 	private String uploadPrefix, integratorId, clientId, fileName, fullId;
 	private LocalDate received;
 	
@@ -58,7 +59,7 @@ public class ClientDataFile {
 	}
 	
 	public static boolean isInputFile(String key) {
-		if (key.contains("/INPUT/")) {
+		if (key.contains(INPUT_DATA_FILE_IDENTIFIER) && ! key.endsWith(INPUT_DATA_FILE_IDENTIFIER)) {
 			return true;
 		} else {
 			return false;
