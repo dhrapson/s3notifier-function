@@ -28,13 +28,17 @@ public class S3EventHandlerTest {
 	    public void testLambdaFunctionHandler() {
 	        S3EventHandler handlerReal = new S3EventHandler();
 	        S3EventHandler handlerSpy = Mockito.spy(handlerReal);
+	        
+	        Configurator config = Mockito.mock(Configurator.class);
 	        	        
 	        FileReceivedManager manager = Mockito.mock(FileReceivedManager.class);
 	        doReturn(manager).when(handlerSpy).getFileReceivedManager();
+	        doReturn(config).when(handlerSpy).getConfigurator();
+	        doReturn("/test-folder").when(config).getConfigValue(EnvVars.DROPBOX_PARENT_FOLDER_ENV_VAR);
 	        
 	        Context ctx = createContext();
 	        
-	        List<String> output = handlerSpy.handleRequest(input, ctx);
+	        List<String> output = handlerSpy.handleS3Request(input, ctx);
 	        List<String> expected = Arrays.asList("test-integrator/test-client/INPUT/test-file.csv");
 	        assertEquals(expected, output);
 	        verify(manager).process(new ClientDataFile("test parent", "test-integrator", "test-client/INPUT/test-file.csv"));
