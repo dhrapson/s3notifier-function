@@ -1,18 +1,22 @@
 package com.wtr.s3notifier;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 
 public class ClientDataFile {
 	
 	private String uploadPrefix, integratorId, clientId, fileName, fullId;
+	private LocalDate received;
 	
-	public ClientDataFile(String uploadPrefix, String integratorId, String key) {
+	public ClientDataFile(String uploadPrefix, String integratorId, String key, Date input) {
 		super();
 		this.uploadPrefix = uploadPrefix;
 		this.integratorId = integratorId;
 		this.clientId = clientNameFromKey(key);
 		this.fileName = fileNameFromKey(key);
 		this.fullId = key;
+		this.received = input.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 	}
 
 	public String getIntegratorId() {
@@ -28,7 +32,7 @@ public class ClientDataFile {
 	}
 	
 	public String getUploadLocation() {
-		return uploadPrefix+"/"+integratorId+"/"+clientId+"/"+fileName+"-"+LocalDate.now();
+		return uploadPrefix+"/"+integratorId+"/"+clientId+"/"+fileName+"-"+received;
 	}
 	
 	public String getDownloadLocation() {
@@ -42,7 +46,7 @@ public class ClientDataFile {
 		} else {
 			prefix = "/"+integratorId+"/"+clientId+"/PROCESSED/"+fileName;
 		}
-		return prefix +"-"+ LocalDate.now();
+		return prefix +"-"+ received;
 	}
 
 	public String toString() {

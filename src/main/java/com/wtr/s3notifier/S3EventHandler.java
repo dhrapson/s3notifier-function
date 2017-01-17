@@ -2,6 +2,7 @@ package com.wtr.s3notifier;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.LogManager;
@@ -48,9 +49,9 @@ public class S3EventHandler implements RequestHandler<SNSEvent, List<String>> {
     	for (S3EventNotificationRecord record : input.getRecords()) {
     	    String s3Key = record.getS3().getObject().getKey();
     	    String s3Bucket = record.getS3().getBucket().getName();
-    	    if (s3Key.contains("/INPUT/")) {
+    	    if (ClientDataFile.isInputFile(s3Key)) {
     	    	log.info("processing "+s3Key+" in "+s3Bucket);
-    	    	filesToProcess.add(new ClientDataFile(getDropboxParentFolder(), s3Bucket, s3Key));
+    	    	filesToProcess.add(new ClientDataFile(getDropboxParentFolder(), s3Bucket, s3Key, new Date()));
     	    }
      	}
     	

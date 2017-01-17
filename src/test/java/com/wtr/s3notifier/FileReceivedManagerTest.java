@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.util.Date;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -23,7 +24,7 @@ public class FileReceivedManagerTest {
 		DropboxManager dropbox = Mockito.mock(DropboxManager.class);
 		FileReceivedManager managerReal = new FileReceivedManager(s3, dropbox, emailer, "test@example.com");
 		FileReceivedManager managerSpy = Mockito.spy(managerReal);
-		ClientDataFile cdf = new ClientDataFile("/parent", "integrator", "client/INPUT/file");
+		ClientDataFile cdf = new ClientDataFile("/parent", "integrator", "client/INPUT/file", new Date());
 		File f = new File("notused");
 		when(s3.downloadFile("integrator", "client/INPUT/file")).thenReturn(f);
 		Mockito.doReturn("somecontent").when(managerSpy).readFile(f);
@@ -40,7 +41,7 @@ public class FileReceivedManagerTest {
 		S3FileManager s3 = Mockito.mock(S3FileManager.class);
 		FileReceivedManager managerReal = new FileReceivedManager(s3, null, null, "test@example.com");
 		FileReceivedManager managerSpy = Mockito.spy(managerReal);
-		ClientDataFile cdf = new ClientDataFile("/parent", "integrator", "client/INPUT/file");
+		ClientDataFile cdf = new ClientDataFile("/parent", "integrator", "client/INPUT/file", new Date());
 		File f = new File("notused");
 		Mockito.doReturn("  ").when(managerSpy).readFile(f);
 		when(s3.downloadFile("integrator", "client/INPUT/file")).thenReturn(f);

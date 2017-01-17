@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.BeforeClass;
@@ -41,7 +42,7 @@ public class S3EventHandlerTest {
 	        List<String> output = handlerSpy.handleS3Request(input, ctx);
 	        List<String> expected = Arrays.asList("test-integrator/test-client/INPUT/test-file.csv");
 	        assertEquals(expected, output);
-	        verify(manager).process(new ClientDataFile("test parent", "test-integrator", "test-client/INPUT/test-file.csv"));
+	        verify(manager).process(new ClientDataFile("test parent", "test-integrator", "test-client/INPUT/test-file.csv", new Date()));
 	    }
 	    
 	    private Context createContext() {
