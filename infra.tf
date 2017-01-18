@@ -136,3 +136,37 @@ resource "aws_sns_topic_subscription" "S3NotifierTopic-s3notifier" {
     protocol = "lambda"
     endpoint = "${aws_lambda_function.s3notifier.arn}"
 }
+
+resource "aws_lambda_function" "s3schedulednotifier" {
+    filename = "target/s3notifier-function.jar"
+    function_name = "s3schedulednotifier"
+    role = "${aws_iam_role.s3notifier_lambda_iam_role.arn}"
+    runtime = "java8"
+    handler = "com.wtr.s3notifier.ScheduleHandler"
+    source_code_hash = "${base64sha256(file("target/s3notifier-function.jar"))}"
+    environment {
+        variables = {
+            SMTP_HOST = "${var.smtp_host}"
+            SMTP_PORT = "${var.smtp_port}"
+            SMTP_USERNAME = "${var.smtp_username}"
+            SMTP_PASSWORD = "${var.smtp_password}"
+            EMAIL_FROM = "${var.email_from}"
+            EMAIL_TO = "${var.email_to}"
+            DROPBOX_ACCESS_TOKEN  ="${var.dropbox_access_token}"
+            DROPBOX_PARENT_FOLDER ="${var.dropbox_parent_folder}"
+        }
+    }
+    timeout = 20
+    memory_size = 256
+}
+
+resource "aws_cloudwatch_event_target" "s3schedulednotifier" {
+  target_id = "Yada"
+  rule = "${aws_cloudwatch_event_rule.s3schedulednotifier.name}"
+  arn = "${aws_lambda_function.s3schedulednotifier.arn}"
+}
+
+resource "aws_cloudwatch_event_rule" "s3schedulednotifier" {
+  name = "s3schedulednotifier_dailyevent"
+  schedule_expression = "cron(35 21 1/1 * ? *)"
+}
