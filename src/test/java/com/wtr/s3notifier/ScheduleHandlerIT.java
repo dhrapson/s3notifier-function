@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.events.S3Event;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.wtr.s3notifier.s3.S3FileManager;
 
