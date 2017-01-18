@@ -6,13 +6,16 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.wtr.s3notifier.dropbox.DropboxManager;
 import com.wtr.s3notifier.email.EmailManager;
+import com.wtr.s3notifier.s3.S3File;
 import com.wtr.s3notifier.s3.S3FileManager;
 
 public class FileReceivedManagerTest {

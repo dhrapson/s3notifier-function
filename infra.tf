@@ -113,7 +113,7 @@ resource "aws_lambda_function" "s3notifier" {
     function_name = "s3notifier"
     role = "${aws_iam_role.s3notifier_lambda_iam_role.arn}"
     runtime = "java8"
-    handler = "com.wtr.s3notifier.S3EventHandler"
+    handler = "com.wtr.s3notifier.SNSS3EventHandler"
     source_code_hash = "${base64sha256(file("target/s3notifier-function.jar"))}"
     environment {
         variables = {

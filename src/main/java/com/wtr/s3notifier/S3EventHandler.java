@@ -10,9 +10,6 @@ import org.apache.log4j.Logger;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.amazonaws.services.lambda.runtime.events.S3Event;
-import com.amazonaws.services.lambda.runtime.events.SNSEvent;
-import com.amazonaws.services.lambda.runtime.events.SNSEvent.SNSRecord;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.event.S3EventNotification;
 import com.amazonaws.services.s3.event.S3EventNotification.S3EventNotificationRecord;
@@ -20,7 +17,7 @@ import com.wtr.s3notifier.dropbox.DropboxManager;
 import com.wtr.s3notifier.email.EmailManager;
 import com.wtr.s3notifier.s3.S3FileManager;
 
-public class S3EventHandler implements RequestHandler<SNSEvent, List<String>> {
+public class S3EventHandler implements RequestHandler<S3EventNotification, List<String>> {
 
     private static final Logger log = LogManager.getLogger(S3EventHandler.class);
     
@@ -28,21 +25,8 @@ public class S3EventHandler implements RequestHandler<SNSEvent, List<String>> {
     private Configurator config;
     private String dropboxParentFolder;
     
-    @Override
-    public List<String> handleRequest(SNSEvent input, Context context) {
-    	
-    	S3EventNotification s3Event = null;
-    	
-    	List<String> returnValues = new ArrayList<>();
-    	for (SNSRecord record : input.getRecords()) {
-    		String message = record.getSNS().getMessage();
-    		s3Event = S3Event.parseJson(message);
-    		returnValues.addAll(handleS3Request(s3Event, context));
-    	}
-    	return returnValues;
-    }
-    
-    public List<String> handleS3Request(S3EventNotification input, Context context) {
+	@Override
+    public List<String> handleRequest(S3EventNotification input, Context context) {
     	
     	List<ClientDataFile> filesToProcess = new ArrayList<>();
     	List<String> returnValues = new ArrayList<>();
@@ -97,5 +81,4 @@ public class S3EventHandler implements RequestHandler<SNSEvent, List<String>> {
     	}
     	return config;
     }
-
 }
