@@ -17,7 +17,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.wtr.s3notifier.s3.S3FileManager;
 
-public class ScheduleHandlerIT {
+public class ReaperHandlerIT {
 	
     @BeforeClass
     public static void createInput() throws Exception {
@@ -35,8 +35,8 @@ public class ScheduleHandlerIT {
 
     @Test
     public void testLambdaFunctionHandler() {
-    	ScheduleHandler handlerReal = new ScheduleHandler();
-    	ScheduleHandler handlerSpy = Mockito.spy(handlerReal);
+    	ReaperHandler handlerReal = new ReaperHandler();
+    	ReaperHandler handlerSpy = Mockito.spy(handlerReal);
         
         Configurator spyConfig = Mockito.spy(Configurator.class);
         doReturn("email-smtp.eu-west-1.amazonaws.com").when(spyConfig).getConfigValue("SMTP_HOST");

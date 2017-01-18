@@ -9,7 +9,7 @@ import com.wtr.s3notifier.dropbox.DropboxManager;
 import com.wtr.s3notifier.email.EmailManager;
 import com.wtr.s3notifier.s3.S3FileManager;
 
-public class ScheduleHandler implements RequestHandler<String, List<String>> {
+public class ReaperHandler implements RequestHandler<String, List<String>> {
 	
 	private FileReceivedManager manager;
     private Configurator config;

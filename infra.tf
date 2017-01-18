@@ -142,7 +142,7 @@ resource "aws_lambda_function" "s3schedulednotifier" {
     function_name = "s3schedulednotifier"
     role = "${aws_iam_role.s3notifier_lambda_iam_role.arn}"
     runtime = "java8"
-    handler = "com.wtr.s3notifier.ScheduleHandler"
+    handler = "com.wtr.s3notifier.ReaperHandler"
     source_code_hash = "${base64sha256(file("target/s3notifier-function.jar"))}"
     environment {
         variables = {
