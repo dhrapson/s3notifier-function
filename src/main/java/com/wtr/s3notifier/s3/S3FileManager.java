@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CopyObjectRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ListObjectsV2Request;
@@ -31,6 +32,15 @@ public class S3FileManager {
 	
 	public S3FileManager(AmazonS3 s3Client) {
 		this.s3Client = s3Client;
+	}
+		
+	public List<String> listBucketNames() {
+		List<Bucket> buckets = s3Client.listBuckets();
+		List<String> bucketNames = new ArrayList<>();
+		for (Bucket bucket : buckets) {
+			bucketNames.add(bucket.getName());
+		}
+		return bucketNames;
 	}
 	
 	public List<S3File> listFiles(String bucketName) {
