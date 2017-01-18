@@ -4,6 +4,78 @@ provider "aws" {
   region     = "${var.region}"
 }
 
+resource "aws_sns_topic" "S3NotifierTopic" {
+  name = "S3NotifierTopic"
+}
+
+resource "aws_sns_topic_policy" "s3notifier_topic_policy" {
+    arn = "${aws_sns_topic.S3NotifierTopic.arn}"
+    policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Id": "s3notifier-topic-policy",
+  "Statement": [
+    {
+      "Sid": "AllowS3ToPublishToTopic",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Action": "SNS:Publish",
+      "Resource": "arn:aws:sns:eu-west-1:609701658665:S3NotifierTopic",
+      "Condition": {
+        "ArnLike": {
+          "aws:SourceArn": "arn:aws:s3:*:*:*"
+        }
+      }
+    },
+    {
+      "Sid": "AllowOwnerFullRightsOnTopic",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Action": [
+        "SNS:Publish",
+        "SNS:RemovePermission",
+        "SNS:SetTopicAttributes",
+        "SNS:DeleteTopic",
+        "SNS:ListSubscriptionsByTopic",
+        "SNS:GetTopicAttributes",
+        "SNS:Receive",
+        "SNS:AddPermission",
+        "SNS:Subscribe"
+      ],
+      "Resource": "arn:aws:sns:eu-west-1:609701658665:S3NotifierTopic",
+      "Condition": {
+        "StringEquals": {
+          "AWS:SourceOwner": "609701658665"
+        }
+      }
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role" "s3notifier_lambda_iam_role" {
+    name = "s3notifier_lambda_iam_role"
+    assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
 
 resource "aws_iam_role_policy" "s3notifier_lambda_iam_role_policy" {
     name = "s3notifier_lambda_iam_role_policy"
@@ -36,25 +108,6 @@ resource "aws_iam_role_policy" "s3notifier_lambda_iam_role_policy" {
 EOF
 }
 
-resource "aws_iam_role" "s3notifier_lambda_iam_role" {
-    name = "s3notifier_lambda_iam_role"
-    assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
-}
-EOF
-}
-
 resource "aws_lambda_function" "s3notifier" {
     filename = "target/s3notifier-function.jar"
     function_name = "s3notifier"
@@ -73,7 +126,13 @@ resource "aws_lambda_function" "s3notifier" {
             DROPBOX_ACCESS_TOKEN  ="${var.dropbox_access_token}"
             DROPBOX_PARENT_FOLDER ="${var.dropbox_parent_folder}"
         }
-    }
+    }	
     timeout = 20
     memory_size = 256
+}
+
+resource "aws_sns_topic_subscription" "S3NotifierTopic-s3notifier" {
+    topic_arn = "${aws_sns_topic.S3NotifierTopic.arn}"
+    protocol = "lambda"
+    endpoint = "${aws_lambda_function.s3notifier.arn}"
 }
