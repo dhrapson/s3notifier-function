@@ -50,10 +50,11 @@ public class FileReceivedManager {
 	
 	public boolean process(ClientDataFile cdf) {
 		if (!cdf.isThisInputFile()) {
+			log.info("not an input file: "+cdf);
 			return false;
 		}
 		
-    	log.info("processing "+cdf.getFileName()+" in "+cdf.getClientId()+" in "+cdf.getIntegratorId());
+    	log.info("processing "+cdf);
     	File file = s3.downloadFile(cdf.getIntegratorId(), cdf.getDownloadLocation());
     	try {
 			if (readFile(file).trim().length() == 0) {
