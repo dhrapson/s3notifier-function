@@ -6,9 +6,9 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 
 /**
- * A simple mock implementation of the {@code Context} interface. Default
- * values are stubbed out, and setters are provided so you can customize
- * the context before passing it to your function.
+ * A simple mock implementation of the {@code Context} interface. Default values
+ * are stubbed out, and setters are provided so you can customize the context
+ * before passing it to your function.
  */
 public class TestContext implements Context {
 
@@ -111,6 +111,6 @@ public class TestContext implements Context {
         @Override
         public void log(String message) {
             System.err.println(message);
-        } 
+        }
     }
 }

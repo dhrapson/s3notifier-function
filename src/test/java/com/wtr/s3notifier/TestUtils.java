@@ -34,19 +34,18 @@ public class TestUtils {
         mapper.registerModule(new TestJacksonMapperModule());
     }
 
-    private static final DateTimeFormatter dateTimeFormatter = 
-            ISODateTimeFormat.dateTime()
-                        .withZone(new FixedDateTimeZone("GMT", "GMT", 0, 0));
+    private static final DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZone(new FixedDateTimeZone("GMT", "GMT", 0, 0));
 
     /**
      * Helper method that parses a JSON object from a resource on the classpath
      * as an instance of the provided type.
      *
-     * @param resource the path to the resource (relative to this class)
-     * @param clazz the type to parse the JSON into
+     * @param resource
+     *            the path to the resource (relative to this class)
+     * @param clazz
+     *            the type to parse the JSON into
      */
-    public static <T> T parse(String resource, Class<T> clazz)
-            throws IOException {
+    public static <T> T parse(String resource, Class<T> clazz) throws IOException {
 
         InputStream stream = TestUtils.class.getResourceAsStream(resource);
         try {
@@ -63,7 +62,7 @@ public class TestUtils {
             }
         } finally {
             stream.close();
-        } 
+        }
     }
 
     private static class TestJacksonMapperModule extends SimpleModule {
@@ -81,29 +80,22 @@ public class TestUtils {
     private static class DateTimeSerializer extends JsonSerializer<DateTime> {
 
         @Override
-        public void serialize(
-                DateTime value,
-                JsonGenerator gen,
-                SerializerProvider provider) throws IOException {
+        public void serialize(DateTime value, JsonGenerator gen, SerializerProvider provider) throws IOException {
 
             gen.writeString(dateTimeFormatter.print(value));
         }
     }
 
-    private static class DateTimeDeserializer
-            extends JsonDeserializer<DateTime> {
+    private static class DateTimeDeserializer extends JsonDeserializer<DateTime> {
 
         @Override
-        public DateTime deserialize(
-                JsonParser parser,
-                DeserializationContext context) throws IOException {
+        public DateTime deserialize(JsonParser parser, DeserializationContext context) throws IOException {
 
             return dateTimeFormatter.parseDateTime(parser.getText());
         }
     }
 
-    private static class UpperCaseRecordsPropertyNamingStrategy
-            extends PropertyNamingStrategy.PropertyNamingStrategyBase {
+    private static class UpperCaseRecordsPropertyNamingStrategy extends PropertyNamingStrategy.PropertyNamingStrategyBase {
 
         private static final long serialVersionUID = 1L;
 

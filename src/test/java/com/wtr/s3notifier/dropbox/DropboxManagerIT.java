@@ -14,33 +14,33 @@ import com.wtr.s3notifier.EnvVars;
 import com.wtr.s3notifier.s3.S3Exception;
 
 public class DropboxManagerIT {
-	
-	@BeforeClass
-	public static void check() throws Exception {
-		EnvVars.checkEnvVars(EnvVars.DROPBOX_ACCESS_TOKEN_ENV_VAR);
-	}
-	
-	@Test
-	public void testDropboxFileManagement() throws Exception {
-		
-		DropboxManager dropbox = new DropboxManager(DropboxManager.getClient(System.getenv(EnvVars.DROPBOX_ACCESS_TOKEN_ENV_VAR)));
-		String remoteFilePath = "/testing/upload-fixture.txt";
-		try {
-			URL resource = this.getClass().getResource("/upload-fixture.txt");
-			File sourceFixture = new File(resource.getPath());
-			dropbox.uploadFile(sourceFixture, remoteFilePath);
-			File temp;
-			try {
-				temp = File.createTempFile("temp-file-name", ".tmp");
-			} catch (IOException e) {
-				throw new S3Exception(e);
-			}
-			dropbox.downloadFile( remoteFilePath, temp);
-			byte[] f1 = Files.readAllBytes(sourceFixture.toPath());
-			byte[] f2 = Files.readAllBytes(temp.toPath());
-			assertArrayEquals(f1, f2);
-		} finally {
-			dropbox.deleteRemoteFile(remoteFilePath);
-		}
-	}
+
+    @BeforeClass
+    public static void check() throws Exception {
+        EnvVars.checkEnvVars(EnvVars.DROPBOX_ACCESS_TOKEN_ENV_VAR);
+    }
+
+    @Test
+    public void testDropboxFileManagement() throws Exception {
+
+        DropboxManager dropbox = new DropboxManager(DropboxManager.getClient(System.getenv(EnvVars.DROPBOX_ACCESS_TOKEN_ENV_VAR)));
+        String remoteFilePath = "/testing/upload-fixture.txt";
+        try {
+            URL resource = this.getClass().getResource("/upload-fixture.txt");
+            File sourceFixture = new File(resource.getPath());
+            dropbox.uploadFile(sourceFixture, remoteFilePath);
+            File temp;
+            try {
+                temp = File.createTempFile("temp-file-name", ".tmp");
+            } catch (IOException e) {
+                throw new S3Exception(e);
+            }
+            dropbox.downloadFile(remoteFilePath, temp);
+            byte[] f1 = Files.readAllBytes(sourceFixture.toPath());
+            byte[] f2 = Files.readAllBytes(temp.toPath());
+            assertArrayEquals(f1, f2);
+        } finally {
+            dropbox.deleteRemoteFile(remoteFilePath);
+        }
+    }
 }

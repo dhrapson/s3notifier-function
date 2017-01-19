@@ -24,23 +24,20 @@ import com.dropbox.core.v2.files.UploadErrorException;
 import com.dropbox.core.v2.files.WriteMode;
 
 public class DropboxManager {
-	
-	private static final Logger log = LogManager.getLogger(DropboxManager.class);
-			
-	private DbxClientV2 dbxClient;
-	
-	public DropboxManager (DbxClientV2 dbxClient) {
-		this.dbxClient = dbxClient;
-	}
 
-	public void uploadFile(File localFile, String remoteFilePath) {		
-		
-		log.info("Uploading "+localFile.getPath()+" to dropbox: "+remoteFilePath);
-		try (InputStream in = getInputStream(localFile)) {
-            FileMetadata metadata = dbxClient.files().uploadBuilder(remoteFilePath)
-                .withMode(WriteMode.ADD)
-                .withClientModified(new Date(localFile.lastModified()))
-                .uploadAndFinish(in);
+    private static final Logger log = LogManager.getLogger(DropboxManager.class);
+
+    private DbxClientV2 dbxClient;
+
+    public DropboxManager(DbxClientV2 dbxClient) {
+        this.dbxClient = dbxClient;
+    }
+
+    public void uploadFile(File localFile, String remoteFilePath) {
+
+        log.info("Uploading " + localFile.getPath() + " to dropbox: " + remoteFilePath);
+        try (InputStream in = getInputStream(localFile)) {
+            FileMetadata metadata = dbxClient.files().uploadBuilder(remoteFilePath).withMode(WriteMode.ADD).withClientModified(new Date(localFile.lastModified())).uploadAndFinish(in);
 
             log.info(metadata.toStringMultiline());
         } catch (UploadErrorException ex) {
@@ -53,44 +50,40 @@ public class DropboxManager {
             System.err.println("Error reading from file \"" + localFile + "\": " + ex.getMessage());
             throw new DropboxException(ex);
         }
-	}
-	
-	public void deleteRemoteFile(String remoteFilePath) {
-		try {
-			dbxClient.files().delete(remoteFilePath);
-		} catch (DeleteErrorException e) {
-			throw new DropboxException(e);
-		} catch (DbxException e) {
-			throw new DropboxException(e);
-		}
-	}
-	
-	public void downloadFile(String remoteFilePath, File localFile) {
-		try (OutputStream outputStream = new FileOutputStream(localFile)) {
-			dbxClient.files().download(remoteFilePath)
-             .download(outputStream);
+    }
+
+    public void deleteRemoteFile(String remoteFilePath) {
+        try {
+            dbxClient.files().delete(remoteFilePath);
+        } catch (DeleteErrorException e) {
+            throw new DropboxException(e);
+        } catch (DbxException e) {
+            throw new DropboxException(e);
+        }
+    }
+
+    public void downloadFile(String remoteFilePath, File localFile) {
+        try (OutputStream outputStream = new FileOutputStream(localFile)) {
+            dbxClient.files().download(remoteFilePath).download(outputStream);
         } catch (FileNotFoundException e) {
-        	throw new DropboxException(e);
-		} catch (IOException e) {
-			throw new DropboxException(e);
-		} catch (DownloadErrorException e) {
-			throw new DropboxException(e);
-		} catch (DbxException e) {
-			throw new DropboxException(e);
-		} 
-	}
-	
-	
-	public static DbxClientV2 getClient(String accessToken){
-		Builder newBuilder = DbxRequestConfig.newBuilder("Reaper/0.1");
-		DbxRequestConfig config = newBuilder.withUserLocaleFrom(Locale.getDefault()).build();
-		return new DbxClientV2(config, accessToken);
-	}
-	
-	InputStream getInputStream(File localFile) throws FileNotFoundException {
-		return new FileInputStream(localFile);
-	}
+            throw new DropboxException(e);
+        } catch (IOException e) {
+            throw new DropboxException(e);
+        } catch (DownloadErrorException e) {
+            throw new DropboxException(e);
+        } catch (DbxException e) {
+            throw new DropboxException(e);
+        }
+    }
+
+    public static DbxClientV2 getClient(String accessToken) {
+        Builder newBuilder = DbxRequestConfig.newBuilder("Reaper/0.1");
+        DbxRequestConfig config = newBuilder.withUserLocaleFrom(Locale.getDefault()).build();
+        return new DbxClientV2(config, accessToken);
+    }
+
+    InputStream getInputStream(File localFile) throws FileNotFoundException {
+        return new FileInputStream(localFile);
+    }
 
 }
-
-	

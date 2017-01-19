@@ -1,6 +1,5 @@
 package com.wtr.s3notifier;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,65 +19,63 @@ import com.wtr.s3notifier.s3.S3FileManager;
 public class S3EventHandler implements RequestHandler<S3EventNotification, List<String>> {
 
     private static final Logger log = LogManager.getLogger(S3EventHandler.class);
-    
+
     private FileReceivedManager manager;
     private Configurator config;
     private String dropboxParentFolder;
-    
-	@Override
+
+    @Override
     public List<String> handleRequest(S3EventNotification input, Context context) {
-    	
-    	List<ClientDataFile> filesToProcess = new ArrayList<>();
-    	List<String> returnValues = new ArrayList<>();
-    	for (S3EventNotificationRecord record : input.getRecords()) {
-    	    String s3Key = record.getS3().getObject().getKey();
-    	    String s3Bucket = record.getS3().getBucket().getName();
-    	    if (ClientDataFile.isInputFile(s3Key)) {
-    	    	log.info("processing "+s3Key+" in "+s3Bucket);
-    	    	filesToProcess.add(new ClientDataFile(getDropboxParentFolder(), s3Bucket, s3Key, new Date()));
-    	    }
-     	}
-    	
-    	for (ClientDataFile fileToProcess : filesToProcess) {
-    		getFileReceivedManager().process(fileToProcess);
-    		returnValues.add(fileToProcess.toString());
-    	}
-    	return returnValues;
+
+        List<ClientDataFile> filesToProcess = new ArrayList<>();
+        List<String> returnValues = new ArrayList<>();
+        for (S3EventNotificationRecord record : input.getRecords()) {
+            String s3Key = record.getS3().getObject().getKey();
+            String s3Bucket = record.getS3().getBucket().getName();
+            if (ClientDataFile.isInputFile(s3Key)) {
+                log.info("processing " + s3Key + " in " + s3Bucket);
+                filesToProcess.add(new ClientDataFile(getDropboxParentFolder(), s3Bucket, s3Key, new Date()));
+            }
+        }
+
+        for (ClientDataFile fileToProcess : filesToProcess) {
+            getFileReceivedManager().process(fileToProcess);
+            returnValues.add(fileToProcess.toString());
+        }
+        return returnValues;
     }
-    
+
     String getDropboxParentFolder() {
-    	if (dropboxParentFolder == null) {
-	    	dropboxParentFolder = getConfigurator().getConfigValue("DROPBOX_PARENT_FOLDER");
-	    	if (!dropboxParentFolder.startsWith("/")) {
-	    		throw new ConfigurationException("Dropbox parent folder must start with a leading slash. The value provided does not: "+dropboxParentFolder);
-	    	}
-    	}
-    	return dropboxParentFolder;
+        if (dropboxParentFolder == null) {
+            dropboxParentFolder = getConfigurator().getConfigValue("DROPBOX_PARENT_FOLDER");
+            if (!dropboxParentFolder.startsWith("/")) {
+                throw new ConfigurationException("Dropbox parent folder must start with a leading slash. The value provided does not: " + dropboxParentFolder);
+            }
+        }
+        return dropboxParentFolder;
     }
-    
+
     FileReceivedManager getFileReceivedManager() {
-    	if (manager == null) {
-	    	config = getConfigurator();
-	    	String smtpHost = config.getConfigValue("SMTP_HOST");    	
-	    	int smtpPort = Integer.parseInt(config.getConfigValue("SMTP_PORT"));
-	    	String smtpUsername = config.getConfigValue("SMTP_USERNAME");    	
-	    	String smtpPassword = config.getConfigValue("SMTP_PASSWORD");
-	    	String emailFrom = config.getConfigValue("EMAIL_FROM");
-	    	String emailTo = config.getConfigValue("EMAIL_TO");
-	    	String dropboxAccessToken = config.getConfigValue("DROPBOX_ACCESS_TOKEN");
-	    	
-	    	manager = new FileReceivedManager( new S3FileManager(new AmazonS3Client()), 
-	    			new DropboxManager(DropboxManager.getClient(dropboxAccessToken)), 
-	    			new EmailManager(smtpHost, smtpPort, smtpUsername, smtpPassword, emailFrom),
-	    			emailTo);
-    	}
-    	return manager;
+        if (manager == null) {
+            config = getConfigurator();
+            String smtpHost = config.getConfigValue("SMTP_HOST");
+            int smtpPort = Integer.parseInt(config.getConfigValue("SMTP_PORT"));
+            String smtpUsername = config.getConfigValue("SMTP_USERNAME");
+            String smtpPassword = config.getConfigValue("SMTP_PASSWORD");
+            String emailFrom = config.getConfigValue("EMAIL_FROM");
+            String emailTo = config.getConfigValue("EMAIL_TO");
+            String dropboxAccessToken = config.getConfigValue("DROPBOX_ACCESS_TOKEN");
+
+            manager = new FileReceivedManager(new S3FileManager(new AmazonS3Client()), new DropboxManager(DropboxManager.getClient(dropboxAccessToken)),
+                    new EmailManager(smtpHost, smtpPort, smtpUsername, smtpPassword, emailFrom), emailTo);
+        }
+        return manager;
     }
-    
+
     Configurator getConfigurator() {
-    	if (config == null) {
-    		config = new Configurator();
-    	}
-    	return config;
+        if (config == null) {
+            config = new Configurator();
+        }
+        return config;
     }
 }
