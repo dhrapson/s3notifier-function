@@ -1,6 +1,7 @@
 package com.wtr.s3notifier.s3;
 
 import java.util.Date;
+import java.util.regex.Pattern;
 
 public class S3File {
 	
@@ -25,7 +26,23 @@ public class S3File {
 	public Date getLastModified() {
 		return lastModified;
 	}
+	
+	public boolean matches(String bucketName, String keyRegex) {
+		if (bucket != bucketName) {
+			return false;
+		}
+		return Pattern.matches(keyRegex, key);
+	}
+	
+	public String getPath() {
+		return "/"+bucket+"/"+key;
+	}
 
+	@Override
+	public String toString() {
+		return "S3File [bucket=" + bucket + ", key=" + key + ", lastModified=" + lastModified + "]";
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
