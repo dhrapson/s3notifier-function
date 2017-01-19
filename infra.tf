@@ -170,3 +170,35 @@ resource "aws_cloudwatch_event_rule" "s3reaper" {
   name = "s3reaper_dailyevent"
   schedule_expression = "cron(35 21 1/1 * ? *)"
 }
+
+resource "aws_lambda_function" "s3schedulechecker" {
+    filename = "target/s3notifier-function.jar"
+    function_name = "s3schedulechecker"
+    role = "${aws_iam_role.s3notifier_lambda_iam_role.arn}"
+    runtime = "java8"
+    handler = "com.wtr.s3notifier.ScheduleHandler"
+    source_code_hash = "${base64sha256(file("target/s3notifier-function.jar"))}"
+    environment {
+        variables = {
+            SMTP_HOST = "${var.smtp_host}"
+            SMTP_PORT = "${var.smtp_port}"
+            SMTP_USERNAME = "${var.smtp_username}"
+            SMTP_PASSWORD = "${var.smtp_password}"
+            EMAIL_FROM = "${var.email_from}"
+            EMAIL_TO = "${var.email_to}"
+        }
+    }
+    timeout = 20
+    memory_size = 256
+}
+
+resource "aws_cloudwatch_event_target" "s3schedulechecker" {
+  target_id = "Nada"
+  rule = "${aws_cloudwatch_event_rule.s3schedulechecker.name}"
+  arn = "${aws_lambda_function.s3schedulechecker.arn}"
+}
+
+resource "aws_cloudwatch_event_rule" "s3schedulechecker" {
+  name = "s3schedulechecker_dailyevent"
+  schedule_expression = "cron(35 21 1/1 * ? *)"
+}
