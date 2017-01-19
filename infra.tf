@@ -137,9 +137,9 @@ resource "aws_sns_topic_subscription" "S3NotifierTopic-s3notifier" {
     endpoint = "${aws_lambda_function.s3notifier.arn}"
 }
 
-resource "aws_lambda_function" "s3schedulednotifier" {
+resource "aws_lambda_function" "s3reaper" {
     filename = "target/s3notifier-function.jar"
-    function_name = "s3schedulednotifier"
+    function_name = "s3reaper"
     role = "${aws_iam_role.s3notifier_lambda_iam_role.arn}"
     runtime = "java8"
     handler = "com.wtr.s3notifier.ReaperHandler"
@@ -160,13 +160,13 @@ resource "aws_lambda_function" "s3schedulednotifier" {
     memory_size = 256
 }
 
-resource "aws_cloudwatch_event_target" "s3schedulednotifier" {
+resource "aws_cloudwatch_event_target" "s3reaper" {
   target_id = "Yada"
-  rule = "${aws_cloudwatch_event_rule.s3schedulednotifier.name}"
-  arn = "${aws_lambda_function.s3schedulednotifier.arn}"
+  rule = "${aws_cloudwatch_event_rule.s3reaper.name}"
+  arn = "${aws_lambda_function.s3reaper.arn}"
 }
 
-resource "aws_cloudwatch_event_rule" "s3schedulednotifier" {
-  name = "s3schedulednotifier_dailyevent"
+resource "aws_cloudwatch_event_rule" "s3reaper" {
+  name = "s3reaper_dailyevent"
   schedule_expression = "cron(35 21 1/1 * ? *)"
 }
