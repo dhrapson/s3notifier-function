@@ -42,12 +42,12 @@ public class S3FileManager {
 		return bucketNames;
 	}
 	
-	public List<S3File> listFiles(String bucketName) {
+	public S3FileSet listFiles(String bucketName) {
 		return listFiles(bucketName, null);
 	}
 	
-	public List<S3File> listFiles(String bucketName, String prefix) {
-		List<S3File> filesFound = new ArrayList<>();
+	public S3FileSet listFiles(String bucketName, String prefix) {
+		S3FileSet filesFound = new S3FileSet();
 
         try {
             log.info("Listing objects");

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -29,7 +30,7 @@ public class S3FileManagerTest {
 		when(mockSummary.getKey()).thenReturn("thekey");
 		when(mockSummary.getLastModified()).thenReturn(new Date(100000));
 		
-		assertEquals(manager.listFiles("bucket"), Arrays.asList(new S3File[]{new S3File("bucket","thekey", new Date(100000))}));
+		assertEquals(manager.listFiles("bucket"), new HashSet<S3File>(Arrays.asList(new S3File("bucket","thekey", new Date(100000)))));
 		
 	}
 	

@@ -23,7 +23,7 @@ public class S3FileManagerIT {
 		
 		manager.uploadFile(bucketName, remoteFilePath, sourceFixture);
 		
-		String fileName = manager.listFiles(bucketName, remoteFilePath).get(0).getKey();
+		String fileName = manager.listFiles(bucketName, remoteFilePath).stream().findFirst().get().getKey();
 		File downloaded = manager.downloadFile(bucketName, fileName);
 		assertNotNull(downloaded);
 		
@@ -43,7 +43,7 @@ public class S3FileManagerIT {
 		manager.uploadFile(bucketName, remoteFilePath, sourceFixture);
 		
 		manager.moveFile(bucketName, remoteFilePath, movedFilePath);
-		String newFileName = manager.listFiles(bucketName, movedFilePath).get(0).getKey();
+		String newFileName = manager.listFiles(bucketName, movedFilePath).stream().findFirst().get().getKey();
 		assertNotNull(newFileName);
 		assertEquals(manager.listFiles(bucketName, remoteFilePath).size(), 0);
 		
