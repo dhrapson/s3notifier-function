@@ -49,7 +49,7 @@ public class FileReceivedManager {
 
         filesToProcess.stream().forEach(f -> process(f));
 
-        return filesToProcess.stream().map(ClientDataFile::toString).collect(Collectors.toList());
+        return filesToProcess.stream().map(ClientDataFile::toString).sorted(String::compareTo).collect(Collectors.toList());
     }
 
     public List<String> warnOnUnmet(LocalDate date) {
