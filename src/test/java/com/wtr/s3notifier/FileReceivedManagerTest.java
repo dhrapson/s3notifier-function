@@ -1,13 +1,14 @@
 package com.wtr.s3notifier;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Matchers.eq;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -73,19 +74,19 @@ public class FileReceivedManagerTest {
     }
 
     @Test
-    public void testWarnOnUnmet() throws Exception {
+    public void testWarnOnUnmetWarningCase() throws Exception {
         S3FileManager s3 = Mockito.mock(S3FileManager.class);
         EmailManager emailer = Mockito.mock(EmailManager.class);
         FileReceivedManager managerReal = new FileReceivedManager(s3, null, emailer, "test@example.com");
         FileReceivedManager managerSpy = Mockito.spy(managerReal);
         when(s3.listBucketNames()).thenReturn(Arrays.asList("one", "two"));
         Date lastMod = new Date();
-        when(s3.listFiles("one")).thenReturn(new S3FileSet(
-                Arrays.asList(new S3File("one", "client1/INPUT/keyA", new Date()), new S3File("one", "client1/DAILY_SCHEDULE", lastMod), new S3File("one", "client1/PROCESSED/keyA", lastMod))));
+        when(s3.listFiles("one")).thenReturn(new S3FileSet(Arrays.asList(new S3File("one", "client1/INPUT/keyA", new Date()), new S3File("one", "client1/DAILY_SCHEDULE", lastMod),
+                new S3File("one", "client1/PROCESSED/keyA-" + LocalDate.now().minus(Period.ofDays(1)), lastMod))));
         when(s3.listFiles("two")).thenReturn(new S3FileSet(
                 Arrays.asList(new S3File("two", "client2/INPUT/keyA", new Date()), new S3File("two", "client2/PROCESSED/keyB", lastMod), new S3File("two", "client2/PROCESSED/keyC", lastMod))));
 
-        assertEquals(Arrays.asList(new S3File("one", "client1/DAILY_SCHEDULE", lastMod).toString()), managerSpy.warnOnUnmet(LocalDate.now()));
+        assertEquals(Arrays.asList("/one/client1/DAILY_SCHEDULE"), managerSpy.warnOnUnmet(LocalDate.now()));
         verify(emailer).sendEmail(eq("test@example.com"), eq("No file received as per schedule: /one/client1/DAILY_SCHEDULE"),
                 eq("The file was expected on " + LocalDate.now() + " but was not received."));
     }
