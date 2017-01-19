@@ -72,7 +72,12 @@ public class FileReceivedManager {
                 .forEach(file -> emailer.sendEmail(fileProcessorEmailTo, "No file received as per schedule: " + file.getPath(), "The file was expected on " + date + " but was not received."));
 
         log.info("Found " + unMetDailySchedules.size() + " unmet");
-        return unMetDailySchedules.stream().map(S3File::toString).collect(Collectors.toList());
+
+        if (unMetDailySchedules.size() > 0) {
+            return unMetDailySchedules.stream().map(S3File::getPath).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+
     }
 
     public boolean process(ClientDataFile cdf) {
