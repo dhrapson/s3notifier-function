@@ -33,7 +33,7 @@ public class ClientDataFile {
     }
 
     public String getUploadLocation() {
-        return uploadPrefix + "/" + integratorId + "/" + clientId + "/" + fileName + "-" + received;
+        return uploadPrefix + "/" + integratorId + "/" + clientId + "/" + insertDateIntoFileName(fileName);
     }
 
     public String getDownloadLocation() {
@@ -45,11 +45,12 @@ public class ClientDataFile {
         if (isThisInputFile()) {
             prefix = fullId.replaceFirst("/INPUT/", "/PROCESSED/");
         } else {
-            prefix = "/" + integratorId + "/" + clientId + "/PROCESSED/" + fileName;
+            prefix = clientId + "/PROCESSED/" + fileName;
         }
-        return prefix + "-" + received;
+        return insertDateIntoFileName(prefix);
     }
 
+    @Override
     public String toString() {
         return integratorId + "/" + fullId;
     }
@@ -95,6 +96,14 @@ public class ClientDataFile {
         } else if (!fullId.equals(other.fullId))
             return false;
         return true;
+    }
+
+    private String insertDateIntoFileName(String filePath) {
+        int finalDotIndex = filePath.lastIndexOf('.');
+        if (finalDotIndex > 0) {
+            return filePath.substring(0, finalDotIndex) + "-" + received + filePath.substring(finalDotIndex);
+        }
+        return filePath + "-" + received;
     }
 
     private String clientNameFromKey(String s3Key) {
