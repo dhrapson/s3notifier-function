@@ -59,7 +59,8 @@ public class FileReceivedManagerTest {
     public void testProcessAll() throws Exception {
 
         S3FileManager s3 = Mockito.mock(S3FileManager.class);
-        FileReceivedManager managerReal = new FileReceivedManager(s3, null, null, "test@example.com");
+        EmailManager emailer = Mockito.mock(EmailManager.class);
+        FileReceivedManager managerReal = new FileReceivedManager(s3, null, emailer, "test@example.com");
         FileReceivedManager managerSpy = Mockito.spy(managerReal);
         Date lastMod = new Date();
         when(s3.listBucketNames()).thenReturn(Arrays.asList("one", "two"));
@@ -71,6 +72,20 @@ public class FileReceivedManagerTest {
         doReturn(true).when(managerSpy).process(twoA);
         assertEquals(1, managerSpy.processAll("/foo").size());
         verify(managerSpy).process(eq(twoA));
+        verify(emailer).sendEmail(eq("test@example.com"), eq("Reaper run complete for " + LocalDate.now()), eq("The reaper has run and processed the following:\ntwo/client/INPUT/keyA"));
+    }
+
+    @Test
+    public void testProcessAllNoneFound() throws Exception {
+
+        S3FileManager s3 = Mockito.mock(S3FileManager.class);
+        EmailManager emailer = Mockito.mock(EmailManager.class);
+        FileReceivedManager managerReal = new FileReceivedManager(s3, null, emailer, "test@example.com");
+        FileReceivedManager managerSpy = Mockito.spy(managerReal);
+        when(s3.listBucketNames()).thenReturn(Arrays.asList("one"));
+        when(s3.listFiles("one")).thenReturn(new S3FileSet(Arrays.asList(new S3File("one", "client/PROCESSED/keyA", new Date()))));
+        assertEquals(0, managerSpy.processAll("/foo").size());
+        verify(emailer).sendEmail(eq("test@example.com"), eq("Reaper run complete for " + LocalDate.now()), eq("No new files needed processing on this scheduled run."));
     }
 
     @Test

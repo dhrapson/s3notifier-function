@@ -49,7 +49,13 @@ public class FileReceivedManager {
 
         filesToProcess.stream().forEach(f -> process(f));
 
-        return filesToProcess.stream().map(ClientDataFile::toString).sorted(String::compareTo).collect(Collectors.toList());
+        List<String> reapedFiles = filesToProcess.stream().map(ClientDataFile::toString).sorted(String::compareTo).collect(Collectors.toList());
+        String body = "No new files needed processing on this scheduled run.";
+        if (reapedFiles.size() > 0) {
+            body = "The reaper has run and processed the following:\n" + String.join("\n", reapedFiles);
+        }
+        emailer.sendEmail(fileProcessorEmailTo, "Reaper run complete for " + LocalDate.now(), body);
+        return reapedFiles;
     }
 
     public List<String> warnOnUnmet(LocalDate date) {
