@@ -37,7 +37,7 @@ public class DropboxManager {
 
         log.info("Uploading " + localFile.getPath() + " to dropbox: " + remoteFilePath);
         try (InputStream in = getInputStream(localFile)) {
-            FileMetadata metadata = dbxClient.files().uploadBuilder(remoteFilePath).withMode(WriteMode.ADD).withClientModified(new Date(localFile.lastModified())).uploadAndFinish(in);
+            FileMetadata metadata = dbxClient.files().uploadBuilder(remoteFilePath).withMode(WriteMode.OVERWRITE).withClientModified(new Date(localFile.lastModified())).uploadAndFinish(in);
 
             log.info(metadata.toStringMultiline());
         } catch (UploadErrorException ex) {
