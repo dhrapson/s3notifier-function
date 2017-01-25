@@ -15,8 +15,8 @@ The code can be developed and tested from the desktop without deployment to AWS
 * Domain must be setup in AWS SES. If SES has not yet verified you domain, both the EMAIL_FROM and EMAIL_TO addresses must be verified 
 * A dropbox app must have been created, with a valid access token
 * An AWS account with credentials
-* An S3 bucket into which the account has access, named test-integrator
-* The test-integrator bucket must NOT have bucket notifications turned on for test-client/INPUT folder
+* An S3 bucket into which the account has access, named myintegrator
+* The myintegrator bucket must NOT have bucket notifications turned on for otherclient/INPUT folder
 
 ## Running Unit Tests
 

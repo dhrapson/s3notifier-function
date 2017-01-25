@@ -40,9 +40,9 @@ public class S3EventHandlerTest {
         Context ctx = createContext();
 
         List<String> output = handlerSpy.handleRequest(input, ctx);
-        List<String> expected = Arrays.asList("test-integrator/test-client/INPUT/test-file.csv");
+        List<String> expected = Arrays.asList("myintegrator/otherclient/INPUT/test-file.csv");
         assertEquals(expected, output);
-        verify(manager).process(new ClientDataFile("test parent", "test-integrator", "test-client/INPUT/test-file.csv", new Date()));
+        verify(manager).process(new ClientDataFile("test parent", "myintegrator", "otherclient/INPUT/test-file.csv", new Date()));
     }
 
     private Context createContext() {

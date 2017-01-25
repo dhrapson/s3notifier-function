@@ -50,7 +50,7 @@ public class S3FileManager {
         S3FileSet filesFound = new S3FileSet();
 
         try {
-            log.info("Listing objects");
+            log.info("Listing objects at " + bucketName + ((prefix == null) ? "" : prefix));
             ListObjectsV2Result result;
 
             if (prefix != null) {

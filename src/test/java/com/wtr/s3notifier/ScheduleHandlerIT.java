@@ -41,7 +41,7 @@ public class ScheduleHandlerIT {
         @Before
         public void setup() {
             S3FileManager s3 = new S3FileManager(new AmazonS3Client());
-            s3.deleteFile("test-integrator", "test-client/DAILY_SCHEDULE");
+            s3.deleteFile("myintegrator", "otherclient/DAILY_SCHEDULE");
         }
 
         @Test
@@ -80,8 +80,8 @@ public class ScheduleHandlerIT {
             S3FileManager s3 = new S3FileManager(new AmazonS3Client());
             URL resource = this.getClass().getResource("/upload-fixture.txt");
             File sourceFixture = new File(resource.getPath());
-            s3.uploadFile("test-integrator", "test-client/DAILY_SCHEDULE", sourceFixture);
-            s3.uploadFile("test-integrator", "test-client/PROCESSED/test-file.csv-" + testDate, sourceFixture);
+            s3.uploadFile("myintegrator", "otherclient/DAILY_SCHEDULE", sourceFixture);
+            s3.uploadFile("myintegrator", "otherclient/PROCESSED/test-file.csv-" + testDate, sourceFixture);
         }
 
         @Test
@@ -112,7 +112,7 @@ public class ScheduleHandlerIT {
             S3FileManager s3 = new S3FileManager(new AmazonS3Client());
             URL resource = this.getClass().getResource("/upload-fixture.txt");
             File sourceFixture = new File(resource.getPath());
-            s3.uploadFile("test-integrator", "test-client/DAILY_SCHEDULE", sourceFixture);
+            s3.uploadFile("myintegrator", "otherclient/DAILY_SCHEDULE", sourceFixture);
         }
 
         @Test
@@ -129,7 +129,7 @@ public class ScheduleHandlerIT {
             Context ctx = createContext();
 
             List<String> output = handlerSpy.handleRequest("foo", ctx);
-            List<String> expected = Arrays.asList("/test-integrator/test-client/DAILY_SCHEDULE");
+            List<String> expected = Arrays.asList("/myintegrator/otherclient/DAILY_SCHEDULE");
             assertEquals(expected, output);
         }
     }
