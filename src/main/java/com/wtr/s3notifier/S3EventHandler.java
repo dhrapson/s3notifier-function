@@ -27,6 +27,7 @@ public class S3EventHandler implements RequestHandler<S3EventNotification, List<
     @Override
     public List<String> handleRequest(S3EventNotification input, Context context) {
 
+        log.info(input);
         List<ClientDataFile> filesToProcess = new ArrayList<>();
         List<String> returnValues = new ArrayList<>();
         for (S3EventNotificationRecord record : input.getRecords()) {
