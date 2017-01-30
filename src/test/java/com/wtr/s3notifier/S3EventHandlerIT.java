@@ -34,7 +34,7 @@ public class S3EventHandlerIT {
         S3FileManager s3 = new S3FileManager(new AmazonS3Client());
         URL resource = this.getClass().getResource("/upload-fixture.txt");
         File sourceFixture = new File(resource.getPath());
-        s3.uploadFile("myintegrator", "otherclient/INPUT/test-file.csv", sourceFixture);
+        s3.uploadFile("wtrci", "otherclient/INPUT/test-file.csv", sourceFixture);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class S3EventHandlerIT {
         Context ctx = createContext();
 
         List<String> output = handlerSpy.handleRequest(input, ctx);
-        List<String> expected = Arrays.asList("myintegrator/otherclient/INPUT/test-file.csv");
+        List<String> expected = Arrays.asList("wtrci/otherclient/INPUT/test-file.csv");
         assertEquals(expected, output);
     }
 

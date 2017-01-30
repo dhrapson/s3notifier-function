@@ -30,8 +30,8 @@ public class ReaperHandlerIT {
         S3FileManager s3 = new S3FileManager(new AmazonS3Client());
         URL resource = this.getClass().getResource("/upload-fixture.txt");
         File sourceFixture = new File(resource.getPath());
-        s3.uploadFile("myintegrator", "otherclient/INPUT/test-file1.csv", sourceFixture);
-        s3.uploadFile("myintegrator", "otherclient/INPUT/test-file2.csv", sourceFixture);
+        s3.uploadFile("wtrci", "otherclient/INPUT/test-file1.csv", sourceFixture);
+        s3.uploadFile("wtrci", "otherclient/INPUT/test-file2.csv", sourceFixture);
     }
 
     @Test
@@ -47,7 +47,7 @@ public class ReaperHandlerIT {
         Context ctx = createContext();
 
         List<String> output = handlerSpy.handleRequest("whevs", ctx);
-        List<String> expected = Arrays.asList("myintegrator/otherclient/INPUT/test-file1.csv", "myintegrator/otherclient/INPUT/test-file2.csv");
+        List<String> expected = Arrays.asList("wtrci/otherclient/INPUT/test-file1.csv", "wtrci/otherclient/INPUT/test-file2.csv");
         assertEquals(expected, output);
     }
 

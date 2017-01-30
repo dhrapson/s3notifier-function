@@ -18,7 +18,7 @@ public class S3FileManagerIT {
 
         URL resource = this.getClass().getResource("/upload-fixture.txt");
         File sourceFixture = new File(resource.getPath());
-        String bucketName = "myintegrator";
+        String bucketName = "wtrci";
         S3FileManager manager = new S3FileManager(new AmazonS3Client());
 
         manager.uploadFile(bucketName, remoteFilePath, sourceFixture);
@@ -37,7 +37,7 @@ public class S3FileManagerIT {
 
         URL resource = this.getClass().getResource("/upload-fixture.txt");
         File sourceFixture = new File(resource.getPath());
-        String bucketName = "myintegrator";
+        String bucketName = "wtrci";
         S3FileManager manager = new S3FileManager(new AmazonS3Client());
 
         manager.uploadFile(bucketName, remoteFilePath, sourceFixture);

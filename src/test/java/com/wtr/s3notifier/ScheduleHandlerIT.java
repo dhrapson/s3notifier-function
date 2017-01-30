@@ -41,7 +41,7 @@ public class ScheduleHandlerIT {
         @Before
         public void setup() {
             S3FileManager s3 = new S3FileManager(new AmazonS3Client());
-            s3.deleteFile("myintegrator", "otherclient/DAILY_SCHEDULE");
+            s3.deleteFile("wtrci", "otherclient/DAILY_SCHEDULE");
         }
 
         @Test
@@ -80,8 +80,8 @@ public class ScheduleHandlerIT {
             S3FileManager s3 = new S3FileManager(new AmazonS3Client());
             URL resource = this.getClass().getResource("/upload-fixture.txt");
             File sourceFixture = new File(resource.getPath());
-            s3.uploadFile("myintegrator", "otherclient/DAILY_SCHEDULE", sourceFixture);
-            s3.uploadFile("myintegrator", "otherclient/PROCESSED/test-file.csv-" + testDate, sourceFixture);
+            s3.uploadFile("wtrci", "otherclient/DAILY_SCHEDULE", sourceFixture);
+            s3.uploadFile("wtrci", "otherclient/PROCESSED/test-file.csv-" + testDate, sourceFixture);
         }
 
         @Test
@@ -112,7 +112,7 @@ public class ScheduleHandlerIT {
             S3FileManager s3 = new S3FileManager(new AmazonS3Client());
             URL resource = this.getClass().getResource("/upload-fixture.txt");
             File sourceFixture = new File(resource.getPath());
-            s3.uploadFile("myintegrator", "otherclient/DAILY_SCHEDULE", sourceFixture);
+            s3.uploadFile("wtrci", "otherclient/DAILY_SCHEDULE", sourceFixture);
         }
 
         @Test
