@@ -28,30 +28,6 @@ resource "aws_sns_topic_policy" "s3notifier_topic_policy" {
           "aws:SourceArn": "arn:aws:s3:*:*:*"
         }
       }
-    },
-    {
-      "Sid": "AllowOwnerFullRightsOnTopic",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "*"
-      },
-      "Action": [
-        "SNS:Publish",
-        "SNS:RemovePermission",
-        "SNS:SetTopicAttributes",
-        "SNS:DeleteTopic",
-        "SNS:ListSubscriptionsByTopic",
-        "SNS:GetTopicAttributes",
-        "SNS:Receive",
-        "SNS:AddPermission",
-        "SNS:Subscribe"
-      ],
-      "Resource": "arn:aws:sns:eu-west-1:609701658665:S3NotifierTopic",
-      "Condition": {
-        "StringEquals": {
-          "AWS:SourceOwner": "609701658665"
-        }
-      }
     }
   ]
 }
