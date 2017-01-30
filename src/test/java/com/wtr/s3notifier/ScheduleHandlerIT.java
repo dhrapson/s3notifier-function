@@ -129,7 +129,7 @@ public class ScheduleHandlerIT {
             Context ctx = createContext();
 
             List<String> output = handlerSpy.handleRequest("foo", ctx);
-            List<String> expected = Arrays.asList("/myintegrator/otherclient/DAILY_SCHEDULE");
+            List<String> expected = Arrays.asList("/wtrci/otherclient/DAILY_SCHEDULE");
             assertEquals(expected, output);
         }
     }
