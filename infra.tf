@@ -22,7 +22,7 @@ resource "aws_sns_topic_policy" "s3notifier_topic_policy" {
         "AWS": "*"
       },
       "Action": "SNS:Publish",
-      "Resource": "arn:aws:sns:eu-west-1:609701658665:S3NotifierTopic",
+      "Resource": "${aws_sns_topic.S3NotifierTopic.arn}",
       "Condition": {
         "ArnLike": {
           "aws:SourceArn": "arn:aws:s3:*:*:*"
