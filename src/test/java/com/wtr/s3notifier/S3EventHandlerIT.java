@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,6 +36,12 @@ public class S3EventHandlerIT {
         URL resource = this.getClass().getResource("/upload-fixture.txt");
         File sourceFixture = new File(resource.getPath());
         s3.uploadFile("wtrci", "otherclient/INPUT/test-file.csv", sourceFixture);
+    }
+
+    @After
+    public void cleardown() {
+        S3FileManager s3 = new S3FileManager(new AmazonS3Client());
+        s3.deleteFile("wtrci", "otherclient/INPUT/test-file.csv");
     }
 
     @Test
